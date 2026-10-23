@@ -127,6 +127,11 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
       - uses: actions/download-artifact@v4
         with:
           name: api-jar
@@ -140,9 +145,10 @@ jobs:
           done
           cat api.log
           exit 1
-      - name: Build y arrancar el front-end en segundo plano
+      - name: Instalar dependencias y arrancar el front-end en segundo plano
         working-directory: web
         run: |
+          npm ci
           npm run build
           nohup npm run preview > preview.log 2>&1 &
           for _ in $(seq 1 60); do
@@ -154,6 +160,7 @@ jobs:
       - uses: cypress-io/github-action@v6
         with:
           working-directory: web
+          install: false
         env:
           VITE_API_URL: http://localhost:8080
       - name: Guardar videos y capturas de Cypress
