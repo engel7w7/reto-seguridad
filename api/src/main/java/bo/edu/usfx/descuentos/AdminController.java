@@ -1,7 +1,10 @@
 package bo.edu.usfx.descuentos;
 
 import java.util.Map;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,7 +22,13 @@ public class AdminController {
     }
 
     @GetMapping("/estadisticas")
-    public Map<String, Object> estadisticas() {
-        return Map.of("calculos", estadisticas.calculos());
+    public ResponseEntity<?> estadisticas(@RequestHeader(value = "X-Admin-Token", required = false) String token) {
+        if (!verificador.habilitado()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        if (!verificador.autoriza(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        return ResponseEntity.ok(Map.of("calculos", estadisticas.calculos()));
     }
 }
