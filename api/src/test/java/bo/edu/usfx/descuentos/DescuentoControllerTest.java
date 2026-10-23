@@ -82,4 +82,15 @@ class DescuentoControllerTest {
                         .header("Access-Control-Request-Method", "POST"))
                 .andExpect(status().isForbidden());
     }
+
+    @Test
+    void cuerpoIlegibleNoFiltraDetallesInternos() throws Exception {
+        mvc.perform(post("/api/descuento")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{esto no es json"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error", is("Solicitud invalida")))
+                .andExpect(jsonPath("$.traza").doesNotExist())
+                .andExpect(jsonPath("$.stackTrace").doesNotExist());
+    }
 }

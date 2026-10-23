@@ -34,10 +34,10 @@ public class DescuentoController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
     }
 
-    // Para depurar mas rapido: que el cliente vea que paso.
+    // No filtrar detalles internos ni trazas de excepcion
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> cualquierError(Exception e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(Map.of("error", e.toString(), "traza", Arrays.toString(e.getStackTrace())));
+                .body(Map.of("error", "Solicitud invalida"));
     }
 }
