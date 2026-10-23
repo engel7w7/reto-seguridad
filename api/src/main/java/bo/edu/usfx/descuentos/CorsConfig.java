@@ -1,5 +1,6 @@
 package bo.edu.usfx.descuentos;
 
+import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -15,15 +16,18 @@ public class CorsConfig implements WebMvcConfigurer {
     private final String[] origenes;
 
     public CorsConfig(@Value("${app.cors-origins}") String[] origenes) {
-        this.origenes = origenes;
+        if (origenes != null && Arrays.stream(origenes).anyMatch(o -> o != null && o.trim().equals("*"))) {
+            throw new IllegalArgumentException("CORS no puede permitir comodin *");
+        }
+        this.origenes = origenes != null ? origenes.clone() : new String[0];
     }
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
-                .allowedOriginPatterns("*")
+                .allowedOriginPatterns(origenes)
                 .allowedMethods("GET", "POST", "OPTIONS")
                 .allowedHeaders("*")
-                .allowCredentials(true);
+                .allowCredentials(false);
     }
 }
