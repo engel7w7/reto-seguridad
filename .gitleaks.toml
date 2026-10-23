@@ -5,4 +5,7 @@ useDefault = true
 [allowlist]
 description = "Valores falsos usados por las pruebas de la API y token revocado"
 paths = ['''api/src/test/.*''']
+commits = ["3502b5b9249cdbbca37c216d30aa9ccfc8cab30e"]
 stopwords = ['''Zx9Qm4Lp8Rt2Vw7Yb3Nc5Hd6Jf1Ks0Ga''']
+regexes = ['''Zx9Qm4Lp8Rt2Vw7Yb3Nc5Hd6Jf1Ks0Ga''']
+
