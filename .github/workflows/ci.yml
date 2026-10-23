@@ -132,16 +132,23 @@ jobs:
           name: api-jar
           path: api-dist
       - name: Arrancar la API en segundo plano
-        run: nohup java -jar api-dist/api.jar > api.log 2>&1 &
+        run: |
+          CORS_ORIGINS="http://localhost:4173,http://127.0.0.1:4173" nohup java -jar api-dist/api.jar > api.log 2>&1 &
+          for _ in $(seq 1 60); do
+            curl -fsS http://127.0.0.1:8080/actuator/health > /dev/null 2>&1 && exit 0
+            sleep 2
+          done
+          cat api.log
+          exit 1
       - uses: cypress-io/github-action@v6
         with:
           working-directory: web
           build: npm run build
           start: npm run preview
-          wait-on: "http://localhost:4173, http://localhost:8080/actuator/health"
+          wait-on: "http-get://127.0.0.1:4173, http-get://127.0.0.1:8080/actuator/health"
           wait-on-timeout: 120
         env:
-          VITE_API_URL: http://localhost:8080
+          VITE_API_URL: http://127.0.0.1:8080
       - name: Guardar videos y capturas de Cypress
         if: always()
         uses: actions/upload-artifact@v4
