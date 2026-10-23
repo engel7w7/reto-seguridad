@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "Practica 10 COM450: pruebas de seguridad con OWASP ZAP, Trivy y gitleaks sobre el pipeline de la Practica 8",
   "scripts": {
-    "prepare": "husky",
+    "prepare": "node -e \"try { if (!process.env.CI && process.env.HUSKY !== '0') { require('child_process').execSync('npx --no-install husky', { stdio: 'inherit' }) } } catch {}\"",
     "test:web": "npm --prefix web test",
     "test:api": "mvn -B -f api/pom.xml test",
     "test": "npm run test:web && npm run test:api"
