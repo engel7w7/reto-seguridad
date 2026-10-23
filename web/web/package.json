@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "descuentos-web": "file:.."
+  }
+}
