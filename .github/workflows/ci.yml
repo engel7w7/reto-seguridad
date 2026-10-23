@@ -140,13 +140,20 @@ jobs:
           done
           cat api.log
           exit 1
+      - name: Build y arrancar el front-end en segundo plano
+        working-directory: web
+        run: |
+          npm run build
+          nohup npm run preview > preview.log 2>&1 &
+          for _ in $(seq 1 60); do
+            curl -fsS http://localhost:4173 > /dev/null 2>&1 && exit 0
+            sleep 2
+          done
+          cat preview.log
+          exit 1
       - uses: cypress-io/github-action@v6
         with:
           working-directory: web
-          build: npm run build
-          start: npm run preview
-          wait-on: 'http://localhost:4173'
-          wait-on-timeout: 120
         env:
           VITE_API_URL: http://localhost:8080
       - name: Guardar videos y capturas de Cypress
@@ -158,4 +165,5 @@ jobs:
             web/cypress/videos
             web/cypress/screenshots
             api.log
+            web/preview.log
           if-no-files-found: ignore
